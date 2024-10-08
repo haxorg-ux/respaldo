@@ -14,26 +14,9 @@ function M.show_menu()
     table.insert(options, item[1])
   end
 
-  local width = 30  -- Ancho del menú flotante
-  local height = #options + 2  -- Altura del menú flotante basada en el número de opciones
-
-  local opts = {
-    style = "minimal",
-    relative = "editor",
-    width = width,
-    height = height,
-    row = (vim.o.lines - height) / 2,
-    col = (vim.o.columns - width) / 2,
-    border = 'single'
-  }
 
   vim.ui.select(options, {
     prompt = 'Selecciona una opción:',
-    border = opts.border,
-    width = opts.width,
-    height = opts.height,
-    row = opts.row,
-    col = opts.col,
   }, function(choice)
     if choice then
       for _, item in ipairs(M.items) do
