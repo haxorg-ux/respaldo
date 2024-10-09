@@ -1,31 +1,35 @@
 require'nvim-web-devicons'.setup {}
 
 -- groups
-vim.cmd("highlight StatusLineMode guifg=#1e222a guibg=#abb2bf")
-vim.cmd("highlight StatusLineSep guifg=#242426 guibg=#abb2bf")
-vim.cmd("highlight StatusLineFiletype guifg=#414373 guibg=#242426")
-vim.cmd("highlight StatusLinePath guifg=#FFFFFF guibg=#242426")
-vim.cmd("highlight StatusLinePosition guifg=#FFFFFF guibg=#242426")
-
--- icon archivo
-local function get_file_icon()
-  local icon = require'nvim-web-devicons'.get_icon_by_filetype(vim.o.filetype)
-  if icon == nil then
-    icon = " " -- icono por defecto
-  end
-  return icon
-end
+vim.cmd("highlight StatusLine guibg=#353b45")
+vim.cmd("highlight StatusLineMode guifg=#1e222a guibg=#81A1C1")
+vim.cmd("highlight StatusLineSep guifg=#565c64 guibg=#565c64")
+vim.cmd("highlight StatusLineSep_p guifg=#98c379 guibg=#98c379")
+vim.cmd("highlight StatusLineFiletype guifg=#abb2bbf guibg=#353b45")
+vim.cmd("highlight StatusLinePath guifg=#abb2bf guibg=#2d3139")
+vim.cmd("highlight StatusLinePosition guifg=#abb2bf guibg=#565c64")
+vim.cmd("highlight StatusLineCenter guibg=#252931")
 
 local mode_icons = {
   n = " ",
   i = " ",
   c = " ",
+  v = " ",
+  V = " ",
+  [' '] = ' ', -- Visual Block
+  R = ' ', -- Replace
+  s = ' ', -- Select
 }
 
 local modes = {
   n = 'Normal', -- Normal
   i = 'Insert', -- Insert 
   c = 'Command', -- Command
+  v = 'VISUAL', -- Visual
+  V = 'VISUAL LINE', -- Visual Line
+  [' '] = 'VISUAL BLOCK', -- Visual Block
+  R = 'REPLACE', -- Replace
+  s = 'SELECT', -- Select
 }
 
 _G.get_mode = function()
@@ -36,10 +40,24 @@ _G.get_mode = function()
   return padding .. " " .. mode_icon .. mode_text
 end
 
+-- Obtener el ícono del archivo
+local function get_file_icon_and_name()
+  local path = vim.api.nvim_buf_get_name(0)
+  if path == "" then
+    return "󰈚  Empty"
+  end
+
+  local name = vim.fn.fnamemodify(path, ":t")
+  local icon = require'nvim-web-devicons'.get_icon(name, vim.fn.expand("%:e"), { default = true })
+  return icon .. " " .. name
+end
+
 
 vim.o.statusline = "%#StatusLineMode#%{v:lua.get_mode()} "
-vim.o.statusline = vim.o.statusline .. "%#StatusLineSep#"
-vim.o.statusline = vim.o.statusline .. "%#StatusLineFiletype# " .. get_file_icon() .. " "
-vim.o.statusline = vim.o.statusline .. "%#StatusLinePath#%t   "
+vim.o.statusline = vim.o.statusline .. "%#StatusLineSep#█"
+vim.o.statusline = vim.o.statusline .. "%#StatusLine# "
+vim.o.statusline = vim.o.statusline .. "%#StatusLineFiletype#" .. get_file_icon_and_name() .. " "
+vim.o.statusline = vim.o.statusline .. "%#StatusLineCenter#%="
 vim.o.statusline = vim.o.statusline .. "%=  "
+vim.o.statusline = vim.o.statusline .. "%#StatusLineSep_p#█"
 vim.o.statusline = vim.o.statusline .. "%#StatusLinePosition#%l:%c "
